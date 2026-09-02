@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SuperCaixa — Acesso</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <div class="auth-wrap">
     <div class="auth-card">
@@ -72,13 +74,12 @@
 
   <script src="js/api.js"></script>
   <script>
-    const API = new API();
 
     // Login com Google via token no redirect
     const params = new URLSearchParams(location.search);
     const gt = params.get('google_token');
     if (gt) {
-      try { API.setToken(gt); location.href = '/app'; } catch(e) { showAlert('Falha no login com Google', 'error'); }
+      try { API.setToken(gt); location.href = '/app'; } catch (e) { showAlert('Falha no login com Google', 'error'); }
     }
 
     function switchTab(tab) {
@@ -125,7 +126,7 @@
         g.classList.add('hidden');
         g.parentNode.querySelector('.divider').classList.add('hidden');
       }
-    }).catch(()=>{});
+    }).catch(() => { });
 
     function showAlert(msg, type) {
       const a = document.getElementById('alert');
@@ -135,4 +136,5 @@
     }
   </script>
 </body>
+
 </html>
