@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuperCaixa</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">$</div>
+      <div class="titles">
+        <h1>SuperCaixa</h1>
+        <small>Gestão financeira</small>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="group-label">Operação</div>
+      <a data-view="dashboard" class="active"><span class="ico">📊</span> Dashboard</a>
+      <a data-view="movements"><span class="ico">💰</span> Movimentações</a>
+      <a data-view="cashclose"><span class="ico">🧾</span> Fechamento de Caixa</a>
+      <a data-view="cashflow"><span class="ico">📈</span> Fluxo de Caixa</a>
+      <div class="group-label">Financeiro</div>
+      <a data-view="accounts"><span class="ico">🗓️</span> Contas a Pagar/Receber</a>
+      <a data-view="reports"><span class="ico">📄</span> Relatórios (DRE)</a>
+      <div class="group-label">Configuração</div>
+      <a data-view="settings"><span class="ico">⚙️</span> Categorias</a>
+    </nav>
+    <div class="userbox">
+      <div class="avatar" id="avatar">?</div>
+      <div class="meta">
+        <div class="n" id="userName">—</div>
+        <div class="r" id="userRole">—</div>
+      </div>
+      <button class="logout" title="Sair" onclick="doLogout()">⏻</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pageTitle">Dashboard</div>
+      <div class="spacer"></div>
+      <div class="user-chip" id="chipRole"></div>
+    </div>
+    <div class="content" id="view"><!-- views render here --></div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalBackdrop" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox"></div>
+</div>
+<div id="toast"></div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

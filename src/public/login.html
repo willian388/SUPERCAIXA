@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuperCaixa — Acesso</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="badge">$</div>
+        <h1>SuperCaixa</h1>
+        <p>Gestão financeira para o seu supermercado</p>
+      </div>
+
+      <div id="alert" class="alert hidden"></div>
+
+      <div class="auth-tab">
+        <button id="tabLogin" class="active" onclick="switchTab('login')">Entrar</button>
+        <button id="tabRegister" onclick="switchTab('register')">Criar conta</button>
+      </div>
+
+      <!-- LOGIN -->
+      <form id="loginForm">
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" id="loginEmail" autocomplete="email" placeholder="seu@email.com">
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+      </form>
+
+      <div class="divider">ou</div>
+
+      <button id="googleBtn" class="btn btn-google" onclick="startGoogle()">&#128274; Continuar com Google</button>
+
+      <!-- REGISTER -->
+      <form id="registerForm" class="hidden">
+        <div class="field">
+          <label>Nome</label>
+          <input type="text" id="regName" placeholder="Seu nome">
+        </div>
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" id="regEmail" placeholder="seu@email.com">
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="regPassword" placeholder="mínimo 6 caracteres">
+        </div>
+        <div class="field">
+          <label>Nível de acesso</label>
+          <select id="regRole">
+            <option value="caixa">Caixa</option>
+            <option value="gerente">Gerente</option>
+            <option value="proprietario" selected>Proprietário</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Criar conta</button>
+      </form>
+
+      <div class="auth-switch" id="switchText">
+        Já tem conta? <a href="#" onclick="event.preventDefault();switchTab('login')">Entrar</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    const API = new API();
+
+    // Login com Google via token no redirect
+    const params = new URLSearchParams(location.search);
+    const gt = params.get('google_token');
+    if (gt) {
+      try { API.setToken(gt); location.href = '/app'; } catch(e) { showAlert('Falha no login com Google', 'error'); }
+    }
+
+    function switchTab(tab) {
+      const login = tab === 'login';
+      document.getElementById('tabLogin').classList.toggle('active', login);
+      document.getElementById('tabRegister').classList.toggle('active', !login);
+      document.getElementById('loginForm').classList.toggle('hidden', !login);
+      document.getElementById('registerForm').classList.toggle('hidden', login);
+      document.getElementById('switchText').innerHTML = login
+        ? 'Novo por aqui? <a href="#" onclick="event.preventDefault();switchTab(\'register\')">Criar conta</a>'
+        : 'Já tem conta? <a href="#" onclick="event.preventDefault();switchTab(\'login\')">Entrar</a>';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      try {
+        await API.login(email, password);
+        location.href = '/app';
+      } catch (err) { showAlert(err.message || 'Falha no login', 'error'); }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        name: document.getElementById('regName').value.trim(),
+        email: document.getElementById('regEmail').value.trim(),
+        password: document.getElementById('regPassword').value,
+        role: document.getElementById('regRole').value
+      };
+      try {
+        await API.register(data);
+        location.href = '/app';
+      } catch (err) { showAlert(err.message || 'Falha ao criar conta', 'error'); }
+    });
+
+    // Verifica se Google está habilitado
+    fetch('/api/auth/google/status').then(r => r.json()).then(s => {
+      if (!s.enabled) {
+        const g = document.getElementById('googleBtn');
+        g.parentNode.insertAdjacentHTML('beforeend',
+          '<div class="alert alert-info mt" style="margin-bottom:0">Login com Google não configurado no servidor. Use e-mail/senha.</div>');
+        g.classList.add('hidden');
+        g.parentNode.querySelector('.divider').classList.add('hidden');
+      }
+    }).catch(()=>{});
+
+    function showAlert(msg, type) {
+      const a = document.getElementById('alert');
+      a.className = 'alert alert-' + type;
+      a.textContent = msg;
+      a.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
