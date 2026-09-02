@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { app, migrate, seedDefaults } = require('./app.js');
+const { app, migrate, seedDefaults } = require('./app');
 
 const PORT = process.env.PORT || 3000;
 
